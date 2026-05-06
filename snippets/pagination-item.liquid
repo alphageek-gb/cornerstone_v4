@@ -18,6 +18,9 @@
         - 'previous'
         - 'next'
       - button_text: { String } The pagination item's button text (used for 'part' items).
+
+      DEAN - modified line 36 below with the replace becuase of fixes for SEO
+
   endcomment
 
   assign button_type = button_type | default: 'none'
@@ -28,8 +31,9 @@
   data-type="{{ item_type }}"
 >
   {% if is_link -%}
+    
     <a
-      href="{{ link }}"
+      href="{{ link | append: ' ' | replace: '?page=1 ', '' }}"
       class="pagination__navigation-button"
       data-type="{{ button_type }}"
       aria-label="{{ button_label }}"

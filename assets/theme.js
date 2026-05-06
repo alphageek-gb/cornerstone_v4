@@ -5449,6 +5449,19 @@ function updatePrices (els, variant) {
     return el.innerHTML = variant.compare_at_price > variant.price ? formatMoney(variant.compare_at_price) : "";
   });
 }
+//Deans routine
+var selectors$DECtable = {
+  productRow: "[discount_table_price]"
+};
+function updateDiscountTable(container, variant){
+  var skuElements = t$2(selectors$DECtable.productRow, container);
+  if (!skuElements.length) return;
+      skuElements.forEach(function (skuElement) {
+        return skuElement.innerText = formatMoney(variant.price * skuElement.attributes.pct.value/100);
+      });
+}
+//End dean Routine
+
 
 var selectors$X = {
   productSku: "[data-product-sku]",
@@ -6738,6 +6751,9 @@ function productBlocks(container) {
 
     // Update sku
     updateSku(container, variant);
+
+     //Dean Update Table
+    updateDiscountTable(container, variant);
 
     // Update displayed discount
     updateDisplayedDiscountEls(container, variant, displayedDiscountEls);

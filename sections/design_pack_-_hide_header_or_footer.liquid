@@ -1,0 +1,89 @@
+{%- comment -%}
+{
+  "pack_name": "Hide header and/or footer",
+  "pack_author": "Design Packs",
+  "license": "© Design Packs. All rights reserved. This code is protected by copyright law and may not be reproduced, distributed, or used without explicit permission from the author. Shopify complies with the Digital Millennium Copyright Act (DMCA) and responds to claims of copyright infringement using DMCA procedures, which could result in the termination of your Shopify account.",
+}
+{%- endcomment -%}
+
+{%- capture minify -%}
+{%- comment -%} CSS {%- endcomment -%}
+<style>
+  .DP__fixed-position {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  {%- if section.settings.hide_header -%}
+    #shopify-section-header,
+    #shopify-section-header-classic,
+    #shopify-section-header-centered,
+    #shopify-section-header-vertical,
+    #shopify-section-header-search-focus,
+    .shopify-section-group-header-group.shopify-section,
+    .shopify-header {
+      display: none !important;
+    }
+  {%- endif -%}
+
+  {%- if section.settings.hide_footer -%}
+    #shopify-section-footer,
+    #shopify-section-footer-classic,
+    #shopify-section-footer-centered,
+    #shopify-section-footer-promotional,
+    .shopify-section-group-footer-group.shopify-section,
+    .shopify-footer {
+      display: none !important;
+    }
+  {%- endif -%}
+
+  {{ section.settings.additional_classes }} {
+    display: none !important;
+  }
+</style>
+{%- endcapture -%}
+{{ minify | strip_newlines }}
+
+{% schema %}
+{
+  "name": "Hide header or footer",
+  "class": "DP__hide-header-or-footer DP__fixed-position",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add this section to any template to hide your theme header and/or footer. Recommended for landing pages, social media campaigns or custom collections where you don't want to link to your main menu."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_header",
+      "label": "Hide header",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_footer",
+      "label": "Hide footer",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🚨 Advanced"
+    },
+    {
+      "type": "text",
+      "id": "additional_classes",
+      "label": "Additional classes (optional)",
+      "info": "Add additional custom classes to hide other elements (eg. .announcement-bar, .popup)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hide header and/or footer 🎒"
+    }
+  ]
+}
+{% endschema %}

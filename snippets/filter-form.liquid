@@ -50,6 +50,13 @@
     {% liquid
       assign sort_by = resource.sort_by | default: resource.default_sort_by
 
+      comment
+        Dean add next 3 line to hide best seller
+      endcomment
+      if resource.sort_by == 'best-seller'
+       assign sort_by = 'title-ascending'
+      endif
+
       for option in resource.sort_options
         if option.value == sort_by
           assign sort_by = option.name

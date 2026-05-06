@@ -1,0 +1,309 @@
+{% doc %}
+  @prompt
+    add a small insection to insert a productpage specific you tube video
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-video-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: {{ block.settings.margin_top }}px auto {{ block.settings.margin_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.padding }}px;
+  }
+
+  .ai-product-video__header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    margin-bottom: {{ block.settings.spacing }}px;
+  }
+
+  .ai-product-video__title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+  }
+
+  .ai-product-video__description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-product-video__container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height:0;
+    padding-bottom:56.25%;
+    overflow: hidden;
+    border-radius: {{ block.settings.video_border_radius }}px;
+    background-color: #000;
+  }
+
+  .ai-product-video__iframe-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .ai-product-video__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    color: #666;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .ai-product-video__placeholder-{{ ai_gen_id }} svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .ai-product-video__placeholder-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .ai-product-video__placeholder-hint-{{ ai_gen_id }} {
+    font-size: 14px;
+    opacity: 0.8;
+    max-width: 300px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-video-{{ ai_gen_id }} {
+      margin: {{ block.settings.margin_top | times: 0.7 }}px auto {{ block.settings.margin_bottom | times: 0.7 }}px;
+      padding: {{ block.settings.padding | times: 0.7 }}px;
+    }
+
+    .ai-product-video__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.9 }}px;
+    }
+
+    .ai-product-video__description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}<div class="ai-product-video-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.title != blank or block.settings.description != blank %}
+    <div class="ai-product-video__header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h3 class="ai-product-video__title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <div class="ai-product-video__description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ai-product-video__container-{{ ai_gen_id }}">
+    {% if block.settings.youtube_video_id != blank %}
+      <iframe
+        class="ai-product-video__iframe-{{ ai_gen_id }}"
+        src="https://www.youtube.com/embed/{{ block.settings.youtube_video_id }}?rel=0&modestbranding=1&playsinline=1"
+        title="Product video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
+    {% else %}
+      <div class="ai-product-video__placeholder-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l-3-3-3 3"/>
+        </svg>
+        <div class="ai-product-video__placeholder-text-{{ ai_gen_id }}">Add a YouTube video</div>
+        <div class="ai-product-video__placeholder-hint-{{ ai_gen_id }}">Enter the YouTube video ID in the block settings to display your product video</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video content"
+    },
+    {
+      "type": "text",
+      "id": "youtube_video_id",
+      "label": "YouTube video ID",
+      "info": "Enter only the video ID (e.g., 'dQw4w9WgXcQ' from'https://www.youtube.com/watch?v=dQw4w9WgXcQ')"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Product demonstration"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Watch this video to see our product in action"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 300,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 800
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Spacing below text",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Top margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Inner padding",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Container border radius",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "video_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Video border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product video"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

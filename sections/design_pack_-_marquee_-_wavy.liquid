@@ -1,0 +1,411 @@
+{%- comment -%}
+{
+  "pack_name": "Marquee - wavy",
+  "pack_author": "Design Packs",
+  "license": "© Design Packs. All rights reserved. This code is protected by copyright law and may not be reproduced, distributed, or used without explicit permission from the author. Shopify complies with the Digital Millennium Copyright Act (DMCA) and responds to claims of copyright infringement using DMCA procedures, which could result in the termination of your Shopify account."
+}
+{%- endcomment -%}
+
+{% comment %} Security Code - hides section when app uninstalled {% endcomment %}
+{%- unless content_for_header contains 'design_packs_file.js' -%}
+  {%- if request.design_mode -%}
+    <div class="dsgn-pck__no-app-warning">
+      <div class="dsgn-pck__no-app-warning-background">
+      </div>
+      <div class="dsgn-pck__no-app-warning-text dsgn-pck__rte">
+        <p><strong>WARNING!</strong> This premium section will not display properly without an active subscription for <a href="https://apps.shopify.com/design-packs" target="_blank" rel="noopener nofollow">Design Packs</a>. If you need any support please email <a href="mailto:info@design-packs.com" target="_blank" rel="noopener">info@design-packs.com</a> with your questions.</p>
+      </div>
+    </div>
+  {%- endif -%}
+  {%- break -%}
+{%- endunless -%}
+
+{%- comment -%} Assign: Preview section js fix {%- endcomment -%}
+{%- assign section_id = section.id | replace: '+', '' | replace: '=', '' -%}
+
+{%- comment -%} Text: custom font_picker values {%- endcomment -%}
+{%- capture font_settings_list -%}
+{{ section.settings.main_font | font_face: font_display: 'swap' }}~
+{{ section.settings.main_font | font_modify: 'weight', 'bolder' | font_face: font_display: 'swap' }}~
+{{ section.settings.main_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}~
+{{ section.settings.main_font | font_modify: 'style', 'italic' | font_modify: 'weight', 'bolder' | font_face: font_display: 'swap' }}
+{%- endcapture -%}
+{%- assign font_array = font_settings_list | split: '~' -%}
+
+{%- capture minify -%}
+{%- comment -%} CSS {%- endcomment -%}
+<style>
+{%- if section.settings.override_theme_font != blank -%}
+  {%- for font in font_array -%}
+    {%- unless font contains 'error' -%}{{ font }}{%- endunless -%}
+  {%- endfor -%}
+  .DP--{{ section_id }} {
+    --main-font: {{ section.settings.main_font.family }}, {{ section.settings.main_font.fallback_families }};
+    --main-font-weight: {{ section.settings.main_font.weight }};
+    --main-font-style: {{ section.settings.main_font.style }};
+    --heading-font: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    --heading-font-weight: {{ section.settings.heading_font.weight }};
+    --heading-font-style: {{ section.settings.heading_font.style }};
+  }
+{%- endif -%}
+
+.DP--{{ section_id }} {
+  --wave-count: 2;
+  position: relative;
+  overflow: hidden;
+  background-color: {{ section.settings.background_solid }};
+
+  background-image: {{ section.settings.background_color }};
+  font-size: 18px;
+  margin-top: {{ section.settings.outer_margin }}px;
+  margin-bottom: {{ section.settings.outer_margin }}px;
+  font-size: calc(var(--dp-g-heading-size, var(--dp-heading-size, 35px)) * {{ section.settings.text_size | times: 0.01 }});
+}
+
+{%- if section.settings.fade_edges -%}
+  #DP--{{ section_id }}::after {
+    z-index: 1;
+    position: absolute;
+    content: '';
+    display: block;
+    pointer-events: none;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: {{ section.settings.background_solid }};
+
+    background-image: {{ section.settings.background_color }};
+    -webkit-mask-image: linear-gradient(90deg, black, transparent 10%, transparent 90%, black 100%);
+    mask-image: linear-gradient(90deg, black, transparent 10%, transparent 90%, black 100%);
+  }
+{%- endif -%}
+
+.DP--{{ section_id }} .dsgn-pck__marquee__inner {
+  display:flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: 100%;
+  padding-top: {{ section.settings.inner_padding }}px;
+  padding-bottom: {{ section.settings.inner_padding }}px;
+  padding-top: {{ section.settings.inner_padding }}px;
+  padding-bottom: {{ section.settings.inner_padding }}px;
+  height: 100%;
+}
+
+.DP--{{ section_id }} .dsgn-pck__marquee__block {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.DP--{{ section_id }} text {
+  fill: {{ section.settings.text_color }};
+  font-size: calc(var(--dp-g-heading-size, var(--dp-heading-size, 35px)) * {{ section.settings.text_size | times: 0.01 }});
+  {%- if section.settings.override_theme_font != blank -%}
+  font-family: var(--main-font);
+  font-weight: var(--main-font-weight);
+  font-style: var(--main-font-style);
+  {%- endif -%}
+}
+
+{%- if section.settings.custom_css != blank -%}
+  {%- assign custom_section_declarations = section.settings.custom_css | split: '}' -%}
+  {%- for declaration in custom_section_declarations -%}
+    {%- if declaration contains '{' -%}
+      #DP--{{ section_id }} {{ declaration }} }
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+  .DP--{{ section_id }} {
+    --wave-count: 1;
+  }
+
+  .DP--{{ section_id }} text {
+    font-size: 18px;
+  }
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+  .DP--{{ section_id }} {
+    margin-top: {{ section.settings.outer_margin | divided_by: 2 }}px;
+    margin-bottom: {{ section.settings.outer_margin | divided_by: 2 }}px;
+  }
+
+  .DP--{{ section_id }} .dsgn-pck__marquee__inner {
+    padding-top: {{ section.settings.inner_padding | divided_by: 2 }}px;
+    padding-bottom: {{ section.settings.inner_padding | divided_by: 2 }}px;
+  }
+
+  {%- if section.settings.mobile_custom_css != blank -%}
+    {%- assign mobile_custom_declarations = section.settings.mobile_custom_css | split: '}' -%}
+    {%- for declaration in mobile_custom_declarations -%}
+      {%- if declaration contains '{' -%}
+        #DP--{{ section_id }} {{ declaration }} }
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+}
+</style>
+
+{%- comment -%} HTML {%- endcomment -%}
+<section id="DP--{{ section_id }}" class="DP--{{ section_id }} dsgn-pck__marquee dsgn-pck__section {{ section.settings.custom_classes }}">
+  {%- if section.settings.anchor_id != blank -%}
+    <div id="{{ section.settings.anchor_id | remove: '#' | handleize }}" class="dsgn-pck__anchor-id" style="height: 0; overflow: hidden;"></div>
+  {%- endif -%}
+  <div class="dsgn-pck__marquee__inner dsgn-pck__marquee-pause-{{ section.settings.scrolling_pause }}">
+    <div id="wave-container" style="width: 100%; height: 100px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" class="wave-svg">
+        <svg width="100%" height="100%" id="waveBox">
+          <path id="wavePath" fill="none" stroke="transparent" />
+          <text>
+            <textPath href="#wavePath" startOffset="0%">
+              {%-for i in (1..60) %}
+                {{ section.settings.text }}
+              {% endfor %}
+            </textPath>
+          </text>
+        </svg>
+      </svg>
+    </div>
+  </div>
+</section>
+{%- endcapture -%}
+{{ minify | strip_newlines }}
+
+{% schema %}
+{
+  "name": "Marquee - wavy",
+  "class": "DP__marquee-wavy",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Big sale on now."
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Speed",
+      "min": 2,
+      "max": 20,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_scrolling",
+      "label": "Reverse scrolling",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "✏️ Text appearance"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 60,
+      "max": 150,
+      "step": 5,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Design"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+
+      "type": "color",
+      "id": "background_solid",
+      "label": "Background",
+      "alpha": true
+    },
+    {
+      "type": "color_background",
+      "id": "background_color",
+      "label": "Background gradient",
+      "info": "Background gradient replaces background where possible."
+    },
+    {
+      "type": "checkbox",
+      "id": "fade_edges",
+      "label": "Fade content as it scrolls offscreen. Background color must be set.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🖼 Layout"
+    },
+    {
+      "type": "range",
+      "id": "inner_padding",
+      "label": "Inner padding",
+      "info": "Only applies to top and bottom.",
+      "min": 0,
+      "max": 100,
+      "default": 40,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "outer_margin",
+      "label": "Outer margin",
+      "info": "Only applies to top and bottom.",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "🚨 Advanced"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_css",
+      "label": "CSS"
+    },
+    {
+      "type": "liquid",
+      "id": "mobile_custom_css",
+      "label": "Mobile CSS",
+      "info": "Applied on screens less than 480px."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Link anchor id",
+      "placeholder": "#design-pack-section",
+      "info": "Enter a unique value to jump to this section from same page using a link or button. Eg. #design-pack-section [Learn more](https://app.gitbook.com/o/UwqKbTxsdQExehd4SSPM/s/iJpf70jLagzGk8zoz4fu/fundamentals/how-to-guides/how-to-jump-link-to-another-section-on-the-same-page)"
+    },
+    {
+      "type": "text",
+      "id": "custom_classes",
+      "label": "Custom classes",
+      "placeholder": "my-custom-class my-custom-class--2",
+      "info": "Add your own CSS classes to section. Eg. my-custom-class my-custom-class--2 [Learn more](https://design-packs.gitbook.io/docs/fundamentals/settings/custom-classes-setting)"
+    },
+    {
+      "type": "checkbox",
+      "id": "override_theme_font",
+      "label": "Override default theme font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "main_font",
+      "label": "Text",
+      "default": "sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee - wavy 🎒"
+    }
+  ]
+}
+{% endschema %}
+{%- comment -%} JSON Settings {%- endcomment -%}
+<script type="application/json" data-dsgn-pck="{{ section_id }}">
+  {
+    "id": {{ section_id | json }},
+    "reverse_scrolling": {{ section.settings.reverse_scrolling | json }},
+    "speed": {{ section.settings.speed | times: 0.01 | json }}
+  }
+</script>
+{%- comment -%} JavaScript {%- endcomment -%}
+<script data-dsgn-pck-js="{{ section_id }}" type="module" defer>
+  (function(){
+    const designPack = {
+      settings: {},
+      load: function(section){
+        const textPath = section.querySelector("textPath");
+        const wavePath = section.querySelector("#wavePath");
+        const waveBox = section.querySelector("#waveBox");
+        let reverseScrolling = designPack.settings.reverse_scrolling;
+        let offset = -100;
+        let speed = designPack.settings.speed;
+
+        function updateWavePath() {
+          const width = window.innerWidth;
+          const waveCount = parseInt(getComputedStyle(section).getPropertyValue('--wave-count'));
+          const segmentWidth = width / waveCount;
+
+          waveBox.setAttribute('viewBox', `0 0 ${width} 100`);
+
+          let path = `M 0 50`;
+          for (let i = 0; i < waveCount; i++) {
+            const x1 = i * segmentWidth;
+            const x2 = (i + 0.5) * segmentWidth;
+            const x3 = (i + 1) * segmentWidth;
+            path += ` C ${x1 + segmentWidth/6} 10, ${x2 - segmentWidth/6} 10, ${x2} 50`;
+            path += ` C ${x2 + segmentWidth/6} 90, ${x3 - segmentWidth/6} 90, ${x3} 50`;
+          }
+
+          wavePath.setAttribute('d', path);
+        }
+
+        function animateText() {
+          if (reverseScrolling) {
+            offset += speed;
+            if (offset > 0) offset = -100;
+          } else {
+            offset -= speed;
+            if (offset <= -100) offset = 0;
+          }
+
+          textPath.setAttribute("startOffset", offset + "%");
+          requestAnimationFrame(animateText);
+        }
+
+        // Initial setup
+        updateWavePath();
+        animateText();
+
+        // Update on window resize
+        window.addEventListener('resize', updateWavePath);
+
+      },
+      unload: function(section){
+
+      }
+    }
+
+    window.addEventListener('shopify:section:unload', function (e) {
+      const settings = document.querySelector(`[data-dsgn-pck="${e.detail.sectionId}"]`);
+      const sectionId = e.detail.sectionId;
+      const section = document.querySelector(`#DP--${e.detail.sectionId}`);
+      if (sectionId == designPack.settings.id){
+        designPack.unload(section);
+      }
+    });
+
+    window.addEventListener('shopify:block:select', function (e) {
+      const section = document.querySelector(`#DP--${e.detail.sectionId}`);
+      designPack.goToSlide(e.target.dataset.slideshowIndex);
+    });
+
+    designPack.settings = JSON.parse(document.querySelector('[data-dsgn-pck="{{ section_id }}"]').innerHTML);
+    const sectionId = {{ section_id | json }};
+    const section = document.querySelector(`#DP--${sectionId}`);
+
+    if (sectionId == designPack.settings.id){
+      designPack.load(section);
+    }
+  })()
+</script>

@@ -16,6 +16,12 @@
   assign file_extension = 'png'
   assign swatch_options = settings.swatch_options | downcase | split: ', '
   assign sort_by = resource.sort_by | default: resource.default_sort_by
+  comment
+    Dean add next 3 lines to hide best selling
+  endcomment
+  if resource.sort_by == 'best-selling'
+    assign sort_by = 'title-ascending'
+  endif
 
   if resource.url
     assign results_url = resource.url

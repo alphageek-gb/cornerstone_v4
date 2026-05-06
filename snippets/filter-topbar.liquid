@@ -167,6 +167,10 @@
 
         <ul class="filter-bar__sort-list">
           {% for option in resource.sort_options -%}
+{%- comment -%}
+Dean - put in this if and endif below to hide best selling
+{%- endcomment -%}       
+  {%  if option.value != 'best-selling' %}
             {% liquid
               assign is_active = false
 
@@ -204,6 +208,8 @@
                 </div>
               </label>
             </li>
+ {% endif %}
+
           {%- endfor %}
         </ul>
       </div>

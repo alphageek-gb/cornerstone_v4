@@ -1,0 +1,44 @@
+{% liquid
+  comment
+    Renders a product price display.
+
+    Required parameters:
+      - prod: { Object } The associated product object
+      - current_variant: { Object } The current variant object.
+      - block: {Object} Current block
+  endcomment
+-%}
+{%- if prod != blank -%}
+
+  <div class="products">
+    {% if product.metafields.custom.price_table.value.title.value -%}
+    <h3>{{ product.metafields.custom.price_table.value.title.value }}</h3>
+      <br>
+ {%- endif %}     
+    <table class="account__table smart-table">
+      <thead>
+        <tr>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Savings</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {%- assign discounts = product.metafields.custom.price_table.value.discount_percents.value | split: ',' -%}
+        {%- assign quantities = product.metafields.custom.price_table.value.quantity_levels.value | split: ',' -%}
+        {%- assign i=0 -%}
+
+        {% for discount in discounts -%}
+         <tr class="">
+          <td style='text-align:center; vertical-align:middle'> {{ quantities[i] }}</td>
+          <td discount_table_price pct={{ 100 |minus: discount }} style='text-align:center; vertical-align:middle' > {{ 100|minus: discount |  times: current_variant.price |divided_by: 100  | money }}</td>
+          <td style='text-align:center; vertical-align:middle'> {{ discount }}% </td>
+           {%- assign i= 1|plus: i -%}
+        </tr>
+        {%- endfor %}
+
+      </tbody>
+    </table>
+  </div>
+{%- endif %}
