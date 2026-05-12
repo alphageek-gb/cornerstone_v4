@@ -1,1 +1,105 @@
+/* ============================================================
+   Price Discount Table
+   ============================================================ */
 
+.price-discount-table-wrapper {
+  width: 100%;
+}
+
+.price-discount-table-title {
+  margin-bottom: 12px;
+}
+
+/* Override account__table's asymmetric th padding.
+   Uses .account__table.price-discount-table (specificity 0,2,1) to
+   beat .account__table th:first-of-type (0,1,2) from theme.css */
+.account__table.price-discount-table th {
+  padding: 0 12px 12px 12px;
+  white-space: normal;
+}
+
+.account__table.price-discount-table th:first-of-type {
+  padding-left: 12px;
+}
+
+.account__table.price-discount-table th:last-of-type {
+  padding-right: 12px;
+}
+
+/* Center all cells */
+.price-discount-table th,
+.price-discount-table td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
+}
+
+@media (max-width: 959px) {
+  /* Keep table as a horizontal grid — override smart-table stacking */
+  .price-discount-table,
+  .price-discount-table tbody {
+    display: table;
+    width: 100%;
+  }
+
+  .price-discount-table thead {
+    display: table-header-group;
+  }
+
+  .price-discount-table tr {
+    display: table-row;
+    padding: 0;
+    margin: 0;
+  }
+
+  .price-discount-table tr + tr {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .account__table.price-discount-table th,
+  .account__table.price-discount-table td {
+    display: table-cell;
+    padding: 8px 6px;
+  }
+
+  .account__table.price-discount-table th:first-of-type,
+  .account__table.price-discount-table td:first-of-type {
+    padding-left: 6px;
+  }
+
+  .account__table.price-discount-table th:last-of-type,
+  .account__table.price-discount-table td:last-of-type {
+    padding-right: 6px;
+  }
+
+  /* Hide data-label prefixes — column headers remain visible */
+  .price-discount-table td::before {
+    display: none;
+  }
+
+  .price-discount-table td:first-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .price-discount-table {
+    font-size: 0.82rem;
+  }
+
+  .account__table.price-discount-table th,
+  .account__table.price-discount-table td {
+    padding: 6px 3px;
+  }
+
+  .account__table.price-discount-table th:first-of-type,
+  .account__table.price-discount-table td:first-of-type {
+    padding-left: 3px;
+  }
+
+  .account__table.price-discount-table th:last-of-type,
+  .account__table.price-discount-table td:last-of-type {
+    padding-right: 3px;
+  }
+}

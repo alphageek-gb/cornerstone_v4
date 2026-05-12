@@ -10,12 +10,11 @@
 -%}
 {%- if prod != blank -%}
   <script>console.log({{ block.settings | json }});</script>
-  <div class="products">
+  <div class="price-discount-table-wrapper">
     {% if block.settings.price_table_title -%}
-    <h3>{{ block.settings.price_table_title}}</h3>
-      <br>
- {%- endif %}     
-    <table class="account__table smart-table">
+    <h3 class="price-discount-table-title">{{ block.settings.price_table_title }}</h3>
+ {%- endif %}
+    <table class="account__table smart-table price-discount-table">
       <thead>
         <tr>
           <th>Qty</th>
@@ -30,10 +29,10 @@
         {%- assign i=0 -%}
 
         {% for discount in discounts -%}
-         <tr class="">
-          <td style='text-align:center; vertical-align:middle'> {{ quantities[i] }}</td>
-          <td discount_table_price pct={{ 100 | minus: discount }} style='text-align:center; vertical-align:middle'> {{ 100 | minus: discount | times: current_variant.price | divided_by: 100 | money }}</td>
-          <td style='text-align:center; vertical-align:middle'> {{ discount }}% </td>
+         <tr>
+          <td data-label="Qty">{{ quantities[i] }}</td>
+          <td discount_table_price pct={{ 100 | minus: discount }} data-label="Price">{{ 100 | minus: discount | times: current_variant.price | divided_by: 100 | money }}</td>
+          <td data-label="Savings">{{ discount }}%</td>
            {%- assign i= 1|plus: i -%}
         </tr>
         {%- endfor %}
