@@ -37,10 +37,13 @@
 
 @media (max-width: 959px) {
   /* Keep table as a horizontal grid — override smart-table stacking */
-  .price-discount-table,
-  .price-discount-table tbody {
+  .price-discount-table {
     display: table;
     width: 100%;
+  }
+
+  .price-discount-table tbody {
+    display: table-row-group;
   }
 
   .price-discount-table thead {
