@@ -19,6 +19,7 @@
       <thead>
         <tr>
           <th>Qty</th>
+          <th>Price</th>
           <th>Savings</th>
         </tr>
       </thead>
@@ -31,6 +32,7 @@
         {% for discount in discounts -%}
          <tr class="">
           <td style='text-align:center; vertical-align:middle'> {{ quantities[i] }}</td>
+          <td discount_table_price pct={{ 100 | minus: discount }} style='text-align:center; vertical-align:middle'> {{ 100 | minus: discount | times: current_variant.price | divided_by: 100 | money }}</td>
           <td style='text-align:center; vertical-align:middle'> {{ discount }}% </td>
            {%- assign i= 1|plus: i -%}
         </tr>

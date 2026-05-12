@@ -82,8 +82,23 @@ document.addEventListener("quick-cart:close", function () {
 //   - The variant object
 // ================================================================================
 document.addEventListener("product:variant-change", function (evt) {
-  console.log("Product variant changed");
-  console.log(evt.detail.variant);
+  var variant = evt.detail.variant;
+  if (!variant) return;
+
+  var moneyFormat = (window.theme && window.theme.moneyFormat) || "${{amount}}";
+
+  function formatCents(cents) {
+    var amount = (cents / 100).toFixed(2);
+    var parts = amount.split(".");
+    var dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    return moneyFormat.replace(/\{\{\s*\w+\s*\}\}/, dollars + "." + parts[1]);
+  }
+
+  document.querySelectorAll("[discount_table_price]").forEach(function (cell) {
+    var pct = parseFloat(cell.getAttribute("pct"));
+    if (isNaN(pct)) return;
+    cell.innerText = formatCents(variant.price * pct / 100);
+  });
 });
 
 // ================================================================================
