@@ -107,34 +107,12 @@
                 class="disclosure-list"
                 aria-hidden="true"
                 data-disclosure-list
-              >
-                {% for country in localization.available_countries %}
-                  <li class="disclosure-list__item {% if country.iso_code == localization.country.iso_code %}disclosure-list__item--current{% endif %}">
-                    <a
-                      class="disclosure-list__option no-transition fs-body-75"
-                      href="#"
-                      {% if country.iso_code == localization.country.iso_code %}
-                        aria-current="true"
-                      {% endif %}
-                      data-value="{{ country.iso_code }}"
-                      data-disclosure-option
-                    >
-                      {%- if show_flags -%}
-                        <span class="flag-icon flag-icon-{{ country.iso_code | handleize }}"></span>
-                      {%- endif -%}
-
-                      <span class="disclosure-list__option-label">
-                        {{- country.name }} ({{ country.currency.iso_code }}
-                        {{ country.currency.symbol }})</span
-                      >
-
-                      {%- if country.iso_code == localization.country.iso_code -%}
-                        {% render 'icon', icon: 'checkmark' %}
-                      {%- endif -%}
-                    </a>
-                  </li>
-                {%- endfor -%}
-              </ul>
+                data-lazy-list
+              ></ul>
+              <script type="application/json" data-country-options>
+                [{%- for country in localization.available_countries -%}{"iso":{{ country.iso_code | json }},"name":{{ country.name | json }},"currencyIso":{{ country.currency.iso_code | json }},"currencySymbol":{{ country.currency.symbol | json }},"current":{% if country.iso_code == localization.country.iso_code %}true{% else %}false{% endif %},"flag":{% if show_flags %}{{ country.iso_code | handleize | json }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+              </script>
+              <span data-checkmark-template style="display:none">{% render 'icon', icon: 'checkmark' %}</span>
             </div>
 
             <input

@@ -9303,12 +9303,12 @@ function Disclosure(node) {
   var list = n$2(selectors$B.list, node);
   var toggle = n$2(selectors$B.toggle, node);
   var input = n$2(selectors$B.input, node);
-  var options = t$2(selectors$B.option, node);
-  var events = [e$2(toggle, "click", handleToggle), e$2(options, "click", submitForm), e$2(document, "click", handleBodyClick), e$2(toggle, "focusout", handleToggleFocusOut), e$2(list, "focusout", handleListFocusOut), e$2(node, "keyup", handleKeyup)];
-  function submitForm(evt) {
+  var events = [e$2(toggle, "click", handleToggle), e$2(node, "click", handleOptionClick), e$2(document, "click", handleBodyClick), e$2(toggle, "focusout", handleToggleFocusOut), e$2(list, "focusout", handleListFocusOut), e$2(node, "keyup", handleKeyup)];
+  function handleOptionClick(evt) {
+    var option = evt.target.closest(selectors$B.option);
+    if (!option) return;
     evt.preventDefault();
-    var value = evt.currentTarget.dataset.value;
-    input.value = value;
+    input.value = option.dataset.value;
     form.submit();
   }
   function handleToggleFocusOut(evt) {
@@ -9334,8 +9334,50 @@ function Disclosure(node) {
     if (ariaExpanded) {
       hideList();
     } else {
+      inflateIfNeeded();
       showList();
     }
+  }
+  function inflateIfNeeded() {
+    if (!list.hasAttribute("data-lazy-list")) return;
+    var jsonEl = node.querySelector("[data-country-options]");
+    if (!jsonEl) return;
+    var countries;
+    try {
+      countries = JSON.parse(jsonEl.textContent);
+    } catch (e) {
+      return;
+    }
+    var checkmarkTemplate = node.querySelector("[data-checkmark-template]");
+    var fragment = document.createDocumentFragment();
+    countries.forEach(function (country) {
+      var li = document.createElement("li");
+      li.className = "disclosure-list__item" + (country.current ? " disclosure-list__item--current" : "");
+      var a = document.createElement("a");
+      a.className = "disclosure-list__option no-transition fs-body-75";
+      a.href = "#";
+      if (country.current) {
+        a.setAttribute("aria-current", "true");
+      }
+      a.dataset.value = country.iso;
+      a.setAttribute("data-disclosure-option", "");
+      if (country.flag) {
+        var flagSpan = document.createElement("span");
+        flagSpan.className = "flag-icon flag-icon-" + country.flag;
+        a.appendChild(flagSpan);
+      }
+      var label = document.createElement("span");
+      label.className = "disclosure-list__option-label";
+      label.textContent = country.name + " (" + country.currencyIso + " " + country.currencySymbol + ")";
+      a.appendChild(label);
+      if (country.current && checkmarkTemplate) {
+        a.insertAdjacentHTML("beforeend", checkmarkTemplate.innerHTML);
+      }
+      li.appendChild(a);
+      fragment.appendChild(li);
+    });
+    list.appendChild(fragment);
+    list.removeAttribute("data-lazy-list");
   }
   function handleBodyClick(evt) {
     var isOption = has([node], evt.target).length > 0;
@@ -10227,6 +10269,29 @@ register("mobile-menu", {
       n$2(selectors$t.regionalFormSubmit, _this.container).setAttribute("disabled", true);
       selects.forEach(function (select) {
         select.value = select.dataset.originalValue;
+      });
+    });
+    this.delegate.on("click", "[data-link-target-pane-key='regional-settings']", function () {
+      var lazySelects = t$2("[data-lazy-select]", _this.container);
+      lazySelects.forEach(function (select) {
+        var form = select.closest(".mobile-menu-regional-settings-form");
+        var jsonEl = form && form.querySelector("[data-mobile-country-options]");
+        if (!jsonEl) return;
+        var currentValue = select.dataset.currentValue;
+        var countries;
+        try {
+          countries = JSON.parse(jsonEl.textContent);
+        } catch (e) {
+          return;
+        }
+        countries.forEach(function (country) {
+          if (country.iso === currentValue) return;
+          var opt = document.createElement("option");
+          opt.value = country.iso;
+          opt.textContent = country.name + " (" + country.currencyIso + " " + country.currencySymbol + ")";
+          select.appendChild(opt);
+        });
+        select.removeAttribute("data-lazy-select");
       });
     });
   },
